@@ -1,0 +1,54 @@
+name: Publish to Registry
+on:    
+  push:
+    tags:
+      - '*'
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+
+    - name: Use clabrocheOtherProjects/setup-ionic@v1.0.4
+      uses: clabrocheOtherProjects/setup-ionic@v1.0.4
+      with:
+        cordova-version: 8
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Build dependencies
+      run: echo VUE_APP_VERSION=${GITHUB_REF:10} >> ./.env.production && npm run build
+
+    - name: Inject version in front
+      run: echo ${GITHUB_REF:10} && echo ${GITHUB_REF:10} > ./server/version
+
+    - name: Sync capacitor
+      run: npx cap sync
+
+    - name: Build apk
+      run: cd android && ./gradlew assembleRelease
+
+    - name: Android apksigner
+      uses: r0adkll/sign-android-release@v1
+      with:
+        releaseDirectory: android/app/build/outputs/apk/release
+        signingKeyBase64: ${{ secrets.KEY_STORE_FILE }}
+        alias: ${{ secrets.KEY_STORE_ALIAS }}
+        keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+        keyPassword: ${{ secrets.KEY_PASSWORD }}
+
+    - name: Move signed apk
+      run: mv ${SIGNED_RELEASE_FILE} server/public/guessMyWiki.apk
+
+    - name: Publish to Registry
+      uses: elgohr/Publish-Docker-Github-Action@master
+      with:
+        pre: echo ::save-state name=RELEASE_VERSION::$(echo ${GITHUB_REF:10})
+        name: clabroche/docker-registry/guessMyWiki
+        username: ${{ secrets.DOCKER_HUB_USER }}
+        password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+        registry: docker.pkg.github.com
+        tags: "latest,${{ env.STATE_RELEASE_VERSION }}"
+  

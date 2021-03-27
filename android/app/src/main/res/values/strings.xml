@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">GuessMyWiki</string>
+    <string name="title_activity_main">GuessMyWiki</string>
+    <string name="package_name">com.coco.guessMyWiki</string>
+    <string name="custom_url_scheme">com.coco.guessMyWiki</string>
+</resources>

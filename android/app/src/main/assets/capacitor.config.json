@@ -1,0 +1,1 @@
+{"appId":"com.coco.guessMyWiki","appName":"GuessMyWiki","bundledWebRuntime":false,"webDir":"./server/public","plugins":{"SplashScreen":{"launchAutoHide":false,"androidScaleType":"CENTER_CROP","showSpinner":false,"splashFullScreen":false,"splashImmersive":false}},"server":{"url":"http://192.168.1.85:8081"}}
