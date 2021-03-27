@@ -7,8 +7,12 @@ class Game {
     this._id = game._id
     /** @type {import('mongodb').ObjectID | string} */
     this.ownerId = game.ownerId
-    /** @type {('easy' | 'medium' | 'hard')} */
+    /** @type {('easy' | 'medium' | 'hard' | 'custom')} */
     this.difficulty = game.difficulty
+    /** @type {import('mongodb').ObjectID | string} */
+    this.wikipediaId = game.wikipediaId
+    /** @type {import('./WikipediaBackend')} */
+    this.wikipedia = game.wikipedia
   }
   /** @param {Game | {[key: string]: any}} game */
   merge(game) {

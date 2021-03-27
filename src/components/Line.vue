@@ -17,6 +17,7 @@
           {{description}}
         </div>
       </div>
+      <slot></slot>
       <div v-if="image" class="image">
         <img loading="lazy" :src="api.getImageURL(image)" alt="">
       </div>
