@@ -31,7 +31,6 @@ Auth.prototype.getUser = async function() {
       token: this.token
     }
   })
-  console.log(this.user)
   this.user.value = new User(user)
   return this.user.value
 }

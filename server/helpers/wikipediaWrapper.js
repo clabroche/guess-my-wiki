@@ -1,5 +1,8 @@
 const { default: axios } = require('axios');
 const WikipediaBackend = require('../shared/WikipediaBackend');
+const textversionjs = require('textversionjs')
+const sort = require('fast-sort');
+const { mongo } = require('./mongoConnect');
 module.exports = {
   async insertNewInDB(search) {
     const begin = await randomPageId()
@@ -33,7 +36,6 @@ async function searchInWiki(search) {
   })
   const res = resp?.query?.search
   if (!res?.length) return
-  console.log(res[0])
   return {
     pageid: res[0]?.pageid,
     title: res[0]?.title,
@@ -52,33 +54,40 @@ async function randomPageId() {
   })
   const res = resp?.query?.random
   if (!res?.length) return
-  console.log(res[0])
   return {
     pageid: res[0]?.id,
     title: res[0]?.title
   }
 }
 /** @param {number} pageid */
-async function getPageLinks(pageid) {
-  const { data: resp } = await wiki.get('', {
-    params: {
-      action: 'query',
-      format: 'json',
-      prop: 'infos',
-      generator: 'links',
-      pageids: pageid,
-      gplnamespace: 0,
-      gpllimit: 'max',
-    }
-  })
-  const res = resp?.query?.pages
-  if (!res) return []
-  return Object.keys(res).map(key => {
-    return {
-      pageid: +key,
-      label: res[key].title
-    }
-  })
+async function getPageLinks(pageid, max = 10) {
+  const fromMongo = await mongo.collection('links').findOne({pageid})
+  if (fromMongo?.links) {
+    return fromMongo.links.slice(0, max)
+  }
+  const params = {
+    action: 'parse',
+    format: 'json',
+    prop: 'text|links',
+    formatversion: 2,
+  }
+  if(typeof pageid === 'number'){
+    params.pageid = pageid
+  } else {
+    params.page = pageid
+  }
+  const { data: resp } = await wiki.get('', {params})
+  const links = resp?.parse?.links
+  /** @type {string} */
+  let text = resp?.parse?.text
+  if (!links) return []
+  text = textversionjs(text)
+  text = text.substring(0, 100000)
+  const alllinks = links.filter(link => text.indexOf(link.title) !== -1 && link.ns === 0 && Number.isNaN(+link.title))
+  const allLinksSorted = sort(alllinks).asc(a => text.indexOf(a.title))
+  const allFormatedLinks = allLinksSorted.map(link => ({ label: link.title, pageid: link.title }))
+  await mongo.collection('links').updateOne({pageid},{$set: {links:allFormatedLinks}}, {upsert: true} )
+  return allFormatedLinks.slice(0, max)
 }
 /** @param {number} pageid */
 async function getRandomPageLink(pageid) {

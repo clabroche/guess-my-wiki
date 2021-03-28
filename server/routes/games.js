@@ -48,6 +48,10 @@ router.post('/', async function (req, res) {
     game.wikipediaId = wiki ? wiki._id : null
   }
   game.score = 1000
+  await game.loadWikipedia()
+  if (game?.wikipedia?.beginPage) {
+    game.currentLinks = await wikipediaWrapper.getPageLinks(game?.wikipedia?.beginPage)
+  }
   await game.save()
   game
     ? res.json(game)
@@ -58,12 +62,27 @@ router.post('/:gameId/next/', searchableFields, async function (req, res) {
   const game = await Game.getById(req.params.gameId)
   await game.loadWikipedia()
   game.steps.push(link)
-  game.score = Math.floor(game.score * 0.9)
-  if(link.pageid === game.wikipedia.endPage) {
+  game.score = Math.floor(game.score * 0.95)
+  if(game.score < 0 ) game.score = 0
+  if (link.pageid === game.wikipedia.endPage) {
     game.completed = true
   }
+  game.currentLinks = await wikipediaWrapper.getPageLinks(link.pageid)
   await game.save()
-  res.json(await wikipediaWrapper.getPageLinks(link.pageid))
+  res.json(game.currentLinks)
+})
+router.post('/:gameId/more/', searchableFields, async function (req, res) {
+  const link = req.body
+  const game = await Game.getById(req.params.gameId)
+  await game.loadWikipedia()
+  game.score = Math.floor(game.score - 150)
+  if (game.score < 0) game.score = 0
+  if (link.pageid === game.wikipedia.endPage) {
+    game.completed = true
+  }
+  game.currentLinks = await wikipediaWrapper.getPageLinks(link.pageid, game.currentLinks.length + 10)
+  await game.save()
+  res.json(game.currentLinks)
 })
 router.put('/:gameId', async function (req, res) {
   const game = await Game.update(req.body)

@@ -8,10 +8,13 @@
     <div class="lists-container">
       <template v-if="!game?.completed">
         <template v-if="!loading">
-          <line-cmp v-for="link of currentStep" :key="link.plcontinue"
+          <line-cmp v-for="link of game.currentLinks" :key="link.plcontinue"
             :bottomLineActive="false"
             :name="link.label"
             @click="goToNext(link)"/>
+          <button v-if="game?.currentLinks?.length % 10 === 0" @click="more">
+            Voir plus (-150<i class="fas fa-award"/>)
+          </button>
         </template>
         <template v-else>
           <div class="spinner-container">
@@ -73,7 +76,6 @@ export default {
           }
         }
       }, 25);
-      console.log(oldScore, newScore)
     })
     onBeforeUnmount(() => clearInterval(interval))
     
@@ -100,8 +102,12 @@ export default {
       }),
       headerSummary: computed(() => {
         if(game.value?.completed) return []
-        return [{label: game.value?.steps?.length || 0, icon: 'fas fa-shoe-prints'}, {label: score.value || 0, icon: 'fas fa-trophy'}]
-      })
+        return [{label: game.value?.steps?.length || 0, icon: 'fas fa-shoe-prints'}, {label: score.value || 0, icon: 'fas fa-award'}]
+      }),
+      async more() {
+        currentStep.value = await game.value.more()
+        await refreshGame()
+      }
     }
   }
 }

@@ -19,6 +19,8 @@ class Game {
     this.wikipedia = game.wikipedia
     /** @type {Array} */
     this.steps = game.steps || []
+    /** @type {Array} */
+    this.currentLinks = game.currentLinks || []
   }
   /** @param {Game | {[key: string]: any}} game */
   merge(game) {
@@ -45,7 +47,6 @@ class Game {
   static async create(game, ...args) {
     const clone = JSON.parse(JSON.stringify(game))
     delete clone._id
-    console.log(api)
     const { data: _game } = await api.post('/games', clone)
     return _game ? new Game(_game) : null
   }
@@ -105,8 +106,14 @@ class Game {
   }
 
   async next(link) {
-    this.score = Math.floor(this.score * 0.9)
+    this.score = Math.floor(this.score * 0.95)
     const { data: links } = await api.post(`/games/${this._id}/next`, link)
+    return links
+  }
+  async more() {
+    const pageid = this.steps[this.steps.length - 1]?.pageid || this.wikipedia.beginPage
+    this.score = Math.floor(this.score - 150)
+    const { data: links } = await api.post(`/games/${this._id}/more`, {pageid})
     return links
   }
 }
