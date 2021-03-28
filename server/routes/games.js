@@ -47,6 +47,7 @@ router.post('/', async function (req, res) {
     const wiki = await Wikipedia.getByDifficulty(game.difficulty)
     game.wikipediaId = wiki ? wiki._id : null
   }
+  game.score = 1000
   await game.save()
   game
     ? res.json(game)

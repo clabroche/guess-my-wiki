@@ -56,7 +56,7 @@ export default {
     }
     .active {
       color: white;
-      background-color:var(--headerBgColor);
+      @include backgroundGradient;
     }
   }
 }

@@ -1,9 +1,9 @@
 <template>
   <div class="root-lists">
     <welcome :mini="true"
-      :header="currentPage"
-      :description="'Objectif: '+ game?.wikipedia?.endLabel"
-      :actions="[{label: game?.steps?.length}]"/>
+      :header="headerTitle"
+      :description="headerDescription"
+      :actions="headerSummary"/>
     <div class="lists-container">
       <template v-if="!game?.completed">
         <template v-if="!loading">
@@ -19,10 +19,7 @@
         </template>
       </template>
       <template v-else>
-        <div class="completed">
-          <svg-background svg="check" :bottom="false" />
-          <button @click="$router.push({name: 'dashboard'})">Revenir à l'écran d'accueil</button>
-        </div>
+        <game-stat :game="game"/>
       </template>
     </div>
   </div>
@@ -36,13 +33,13 @@ import { computed, onMounted, watch } from '@vue/runtime-core'
 import Game from '../../server/shared/Game'
 import Line from '../components/Line.vue'
 import Spinner from '../components/Spinner.vue'
-import SvgBackground from '../components/SvgBackground.vue'
+import GameStat from '../components/GameStat.vue'
 export default {
   components: {
     Welcome,
     lineCmp: Line,
     Spinner,
-    SvgBackground,
+    GameStat,
   }, 
   setup() {
     const gameId = router.currentRoute.value.params.gameId.toString()
@@ -62,8 +59,7 @@ export default {
     return {
       loading,
       currentPage: computed(() => {
-        const previousPage = game?.value?.steps[game?.value?.steps.length - 1]
-        return previousPage ? previousPage.label : game?.value?.wikipedia?.beginLabel
+        
       }),
       gameId,
       game,
@@ -74,7 +70,20 @@ export default {
         currentStep.value = await game.value.next(link)
         await refreshGame()
         loading.value = false
-      }
+      },
+      headerDescription: computed(() => {
+        if(game.value?.completed) return ' '
+        return 'Objectif: '+ game.value?.wikipedia?.endLabel
+      }),
+      headerTitle: computed(() => {
+        if(game.value?.completed) return 'Félicitations'
+        const previousPage = game?.value?.steps[game?.value?.steps.length - 1]
+        return previousPage ? previousPage.label : game?.value?.wikipedia?.beginLabel
+      }),
+      headerSummary: computed(() => {
+        if(game.value?.completed) return []
+        return [{label: game.value?.steps?.length || 0, icon: 'fas fa-shoe-prints'}, {label: game.value?.score || 0, icon: 'fas fa-trophy'}]
+      })
     }
   }
 }
@@ -90,13 +99,6 @@ export default {
     height:100%;
     padding: 10px;
     overflow: auto;
-  }
-  .completed {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    margin-top: 150px;
   }
   .spinner-container {
     display: flex;

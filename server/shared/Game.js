@@ -9,6 +9,8 @@ class Game {
     this.ownerId = game.ownerId
     /** @type {('easy' | 'medium' | 'hard' | 'custom')} */
     this.difficulty = game.difficulty
+    /** @type {number} */
+    this.score = game.score || 0
     /** @type {boolean} */
     this.completed = game.completed ? true : false
     /** @type {import('mongodb').ObjectID | string} */

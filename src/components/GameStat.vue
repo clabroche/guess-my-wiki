@@ -1,0 +1,142 @@
+<template>
+  <div class="game-stat-root">
+    <div class="trip">
+      <div class="section">
+        <i class="fas fa-play"></i>
+        {{game?.wikipedia?.beginLabel}}
+      </div>
+      <i class="fas fa-chevron-right to"></i>
+      <div class="section">
+        <i class="fas fa-flag-checkered"></i>
+        {{game?.wikipedia?.endLabel}}
+      </div>
+    </div>
+    <button @click="$router.push({name: 'dashboard'})">
+      <i class="fas fa-home"></i>
+      Revenir à l'écran d'accueil
+    </button>
+    <div class="scroll">
+      <div class="scores">
+        <div class="score-container">
+          <i class="fas fa-trophy trophy"></i>
+          <div class="score">
+            <div class="value">{{game?.score || 0}}</div>points
+          </div>
+        </div>
+        <div class="score-container">
+          <i class="fas fa-shoe-prints trophy"></i>
+          <div class="score">
+            <div class="value">{{game?.steps?.length || 0}}</div>étapes
+          </div>
+        </div>
+      </div>
+
+      <div class="steps-container">
+        <div class="steps">
+          <div class="step">{{game?.wikipedia?.beginLabel}} <i class="fas fa-chevron-down"></i></div>
+          <div class="step" v-for="step of game?.steps" :key="step.pageid">{{step.label}} <i class="fas fa-chevron-down"></i></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  components: {  },
+  props: {
+    game: {
+      /** @type {import('../../server/shared/Game')} */
+      default: null,
+      required: true,
+    }
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+.game-stat-root {
+  text-align: center;
+  overflow: hidden;
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  .scroll {
+    overflow: auto;
+  }
+  .trip {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    .to {
+      margin: 0 10px;
+    }
+    .section {
+      width: 50%;
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      padding: 10px;
+      box-sizing: border-box;
+      border: 1px solid var(--headerBgColor);
+      box-shadow: 0 0 7px -1px var(--headerBgColor);
+      border-radius: 10px;
+      i {
+        margin-right: 10px;
+        width: 20px;
+      }
+    }
+  }
+  button {
+    margin: auto;
+    margin-bottom: 40px;
+    font-weight: bold;
+    width: max-content;
+  }
+  .scores {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 40px;
+    .score-container {
+      display: flex;
+      flex-direction: column;
+      i {
+        color: var(--headerBgColor);
+        font-size: 80px;
+        text-shadow: 0 0 4px var(--headerBgColor);
+
+      }
+      .score {
+        margin-top: 10px;
+        .value {
+          font-weight: bold;
+          font-size: 1.8em;
+        }
+      }
+    }
+  }
+  .steps-container {
+    margin-bottom: 40px;
+    .steps {
+      .step {
+        display: flex;
+        flex-direction: column;
+        i {
+          margin: 3px;
+        }
+
+        &:first-of-type{
+          font-weight: bold
+        }
+        &:last-of-type{
+          font-weight: bold;
+          i {
+            display: none;
+          }
+        }
+      }
+    } 
+  }
+}
+</style>

@@ -9,8 +9,8 @@
     </div>
     <div class="actions" v-if="actions?.length">
       <div class="action" @click="action.cb()" v-for="(action, i) of actions" :key="'action-' + i">
+        <div v-if="action.label != null">{{action.label}}</div>
         <i :class="'fas fa-'+ action.icon" aria-hidden="true"></i>
-        <div v-if="action.label">{{action.label}}</div>
       </div>
     </div>
   </div>
@@ -74,15 +74,18 @@ export default {
   margin: 0 10px;
   .action{
     flex-shrink: 0;
-    padding: 10px;
+    padding: 5px;
     margin: 5px 0;
-    background-color: rgba(0,0,0,0.4);
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
+    background-color: white;
+    color: var(--headerBgColorAccent);
+    border-radius: 5px;
+    width: 75px;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
+    i {
+      font-size: 0.8em;
+    }
   }
 }
 </style>
