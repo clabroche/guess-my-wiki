@@ -42,7 +42,9 @@ class WikipediaBackend extends Wikipedia{
    */
   static async update(wikipedia) {
     await WikipediaBackend.checkWikipediaExists(wikipedia._id)
-    await mongo.collection('wikipedias').updateOne({ _id: mongo.getID(wikipedia._id) }, wikipedia)
+    const clone = JSON.parse(JSON.stringify(wikipedia))
+    delete clone._id
+    await mongo.collection('wikipedias').updateOne({ _id: mongo.getID(wikipedia._id) }, {$set: clone})
     return wikipedia ? new WikipediaBackend(wikipedia) : null
   }
 

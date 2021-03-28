@@ -2,14 +2,20 @@ const { default: axios } = require('axios');
 const WikipediaBackend = require('../shared/WikipediaBackend');
 module.exports = {
   async insertNewInDB(search) {
+    const begin = await randomPageId()
+    const end = await searchInWiki(search)
     const wiki = new WikipediaBackend({
-      beginPage: await searchInWiki(search),
-      endPage: await randomPageId(),
+      beginPage: begin.pageid,
+      beginLabel: begin.title,
+      endPage: end.pageid,
+      endLabel: end.title,
       difficulty: 'easy',
     })
     await wiki.save()
     return wiki._id
   },
+  getPageLinks,
+  getRandomPageLink
 }
 
 const wiki = axios.create({
@@ -27,7 +33,11 @@ async function searchInWiki(search) {
   })
   const res = resp?.query?.search
   if (!res?.length) return
-  return res[0]?.pageid
+  console.log(res[0])
+  return {
+    pageid: res[0]?.pageid,
+    title: res[0]?.title,
+  }
 }
 async function randomPageId() {
   const { data: resp } = await wiki.get('', {
@@ -42,37 +52,37 @@ async function randomPageId() {
   })
   const res = resp?.query?.random
   if (!res?.length) return
-  return res[0]?.id
+  console.log(res[0])
+  return {
+    pageid: res[0]?.id,
+    title: res[0]?.title
+  }
 }
-async function getPageLinks({pageid, lastlink}) {
+/** @param {number} pageid */
+async function getPageLinks(pageid) {
   const { data: resp } = await wiki.get('', {
-    params: lastlink || {
+    params: {
       action: 'query',
       format: 'json',
-      prop: 'links',
+      prop: 'infos',
+      generator: 'links',
       pageids: pageid,
-      plnamespace: 0,
-      pllimit: 100,
+      gplnamespace: 0,
+      gpllimit: 'max',
     }
   })
   const res = resp?.query?.pages
-  // if (!res?.length) return
-  const links = res[pageid]?.links
-  if (!links?.length) return []
-  return links.map(({ title }) => {
+  if (!res) return []
+  return Object.keys(res).map(key => {
     return {
-      action: 'query',
-      format: 'json',
-      prop: 'links',
-      pageids: pageid,
-      plnamespace: 0,
-      pllimit: 100,
-      plcontinue: `${pageid}|0|${title}`
+      pageid: +key,
+      label: res[key].title
     }
   })
 }
-async function getRandomPageLink({pageid, lastlink}) {
-  const links = await getPageLinks({pageid, lastlink})
+/** @param {number} pageid */
+async function getRandomPageLink(pageid) {
+  const links = await getPageLinks(pageid)
   const index = Math.floor(Math.random() * links.length - 1)
   return links[index]
 }

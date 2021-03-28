@@ -5,8 +5,12 @@ class Wikipedia {
   constructor(wikipedia) {
     /** @type {import('mongodb').ObjectID | string} */
     this._id = wikipedia._id
+    /** @type {string} */
+    this.beginLabel = wikipedia.beginLabel
     /** @type {number} */
     this.beginPage = wikipedia.beginPage
+    /** @type {string} */
+    this.endLabel = wikipedia.endLabel
     /** @type {number} */
     this.endPage = wikipedia.endPage
     /** @type {number} average computed by builder*/

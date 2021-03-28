@@ -7,7 +7,7 @@
           <i class="fas fa-times" aria-hidden="true"></i>
         </div>
         <div class="title-modal" v-if="$slots.header" :style="{'font-size': headerFontSize}">
-          <slot name="header"></slot>
+          <slot name="header"  :data="data"></slot>
         </div>
         <div class="body">
           <slot name="body" :data="data"></slot>

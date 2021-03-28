@@ -10,6 +10,7 @@
     <div class="actions" v-if="actions?.length">
       <div class="action" @click="action.cb()" v-for="(action, i) of actions" :key="'action-' + i">
         <i :class="'fas fa-'+ action.icon" aria-hidden="true"></i>
+        <div v-if="action.label">{{action.label}}</div>
       </div>
     </div>
   </div>

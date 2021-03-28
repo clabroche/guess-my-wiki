@@ -11,7 +11,7 @@ const searchableFields = parsefilterQuery([
 
 router.get('/find', auth, searchableFields, async function (req, res) {
   const filter = req.filter
-  const wiki = await Wikipedia.find(filter, req.user._id)
+  const wiki = await Wikipedia.find(filter)
   wiki
     ? res.json(wiki)
     : res.status(404).send('Game not found')

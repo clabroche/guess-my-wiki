@@ -2,7 +2,7 @@
   <div class="root-lists">
     <welcome :mini="true" header="Choisir le niveau de difficulté" description=" "/>
     <div class="lists-container">
-      <line-cmp
+      <!-- <line-cmp
         name="Facile"
         icon="fas fa-play-circle"
         :bottomLineActive="false"
@@ -16,7 +16,7 @@
         name="Difficile"
         icon="fas fa-play-circle"
         :bottomLineActive="false"
-        @click="goTo('hard')"/>
+        @click="goTo('hard')"/> -->
       <line-cmp
         name="Personnalisé"
         icon="fas fa-play-circle"
@@ -28,7 +28,6 @@
           :value="custom" @input="custom = $event.target.value"
           @click.stop
           @keypress.enter="goTo('custom')">
-        <i class="fas fa-cog" @click="goTo('custom')"></i>
       </line-cmp>
     </div>
   </div>
@@ -40,6 +39,7 @@ import Line from '../components/Line.vue'
 import router from '../router'
 import Game from '../../server/shared/Game'
 import { ref } from '@vue/reactivity'
+import notification from '../services/notification'
 export default {
   components: {
     Welcome,
@@ -50,7 +50,6 @@ export default {
     return {
       custom,
       async goTo(difficulty) {
-        console.log(difficulty)
         if(difficulty === 'custom' && !custom.value) return 
         const game = new Game({difficulty})
         if(difficulty === 'custom') {
@@ -58,7 +57,8 @@ export default {
           game.custom = custom.value
         }  
         await game.save()
-        router.push({name: 'game', params: {gameId: game._id}})
+          .then(() => router.push({name: 'game', params: {gameId: game._id}}))
+          .catch(() => notification.next('error', 'La page wikipedia n\'existes pas'))
       },
     }
   }
@@ -77,7 +77,7 @@ export default {
     padding: 10px;
     overflow: auto;
     input {
-      margin: 0 20px;
+      margin-left: 40px;
     }
   }
 }

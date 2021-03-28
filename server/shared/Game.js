@@ -9,10 +9,14 @@ class Game {
     this.ownerId = game.ownerId
     /** @type {('easy' | 'medium' | 'hard' | 'custom')} */
     this.difficulty = game.difficulty
+    /** @type {boolean} */
+    this.completed = game.completed ? true : false
     /** @type {import('mongodb').ObjectID | string} */
     this.wikipediaId = game.wikipediaId
     /** @type {import('./WikipediaBackend')} */
     this.wikipedia = game.wikipedia
+    /** @type {Array} */
+    this.steps = game.steps || []
   }
   /** @param {Game | {[key: string]: any}} game */
   merge(game) {
@@ -67,14 +71,40 @@ class Game {
   /** @param {{[key: string]: any}} filter */
   // eslint-disable-next-line no-unused-vars
   static async find(filter, ...args) {
-    const { data: game } = await api.get('/games/find', {params: filter})
+    const { data: game } = await api.get('/games/find', { params: filter })
     return game ? new Game(game) : null
+  }
+
+  /** @param {{[key: string]: any}} filter */
+  // eslint-disable-next-line no-unused-vars
+  static async all(filter, ...args) {
+    let { data: games } = await api.get('/games', { params: filter })
+    if (!games) games = []
+    return games.map(game => new Game(game))
+  }
+  static async completed() {
+    const games = await Game.all({ completed: true })
+    return games.reverse()
+  }
+  static async inProgress() {
+    const games = await Game.all({ completed: false })
+    return games.reverse()
   }
 
   /** @param {import('mongodb').ObjectID | string} _id */
   // eslint-disable-next-line no-unused-vars
   static async getById(_id, ...args) {
     return Game.find({ _id })
+  }
+
+  async getLinks() {
+    const { data: links } = await api.get(`/games/${this._id}/current-step`)
+    return links
+  }
+
+  async next(link) {
+    const { data: links } = await api.post(`/games/${this._id}/next`, link)
+    return links
   }
 }
 

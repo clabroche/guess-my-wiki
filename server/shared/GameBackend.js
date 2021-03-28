@@ -1,4 +1,5 @@
 const { mongo } = require("../helpers/mongoConnect")
+const wikipediaWrapper = require("../helpers/wikipediaWrapper")
 const Game = require("./Game")
 const WikipediaBackend = require("./WikipediaBackend")
 
@@ -35,14 +36,14 @@ class GameBackend extends Game{
    * @return {Promise<Game>}
    */
   static async create(game, ownerId) {
-    const clone = JSON.parse(JSON.stringify(game))
-    delete clone._id
-    delete clone.wikipedia
-    if(ownerId) clone.ownerId = mongo.getID(ownerId)
+    const newGame = new GameBackend(game)
+    delete newGame._id
+    delete newGame.wikipedia
+    if(ownerId) newGame.ownerId = mongo.getID(ownerId)
     else throw new Error('OwnerId is not provided')
-    const {insertedId} = await mongo.collection('games').insertOne(clone)
-    clone._id = insertedId
-    return clone ? new GameBackend(clone) : null
+    const {insertedId} = await mongo.collection('games').insertOne(newGame)
+    newGame._id = insertedId
+    return newGame ? new GameBackend(newGame) : null
   }
 
   /**
@@ -51,9 +52,10 @@ class GameBackend extends Game{
    */
   static async update(game) {
     await GameBackend.checkGameExists(game._id, game.ownerId)
-    const clone = JSON.parse(JSON.stringify(game))
-    delete clone.wikipedia
-    await mongo.collection('games').updateOne({ _id: mongo.getID(clone._id) }, clone)
+    const newGame = new GameBackend(game)
+    delete newGame._id
+    delete newGame.wikipedia
+    await mongo.collection('games').updateOne({ _id: mongo.getID(game._id) }, {$set: newGame})
     return game ? new GameBackend(game) : null
   }
 
@@ -78,8 +80,24 @@ class GameBackend extends Game{
     return GameBackend.find({_id: mongo.getID(_id)}, ownerId)
   }
 
+  /** @param {{[key: string]: any}} filter */
+  static async all(filter, ownerId) {
+    if (ownerId) filter.ownerId = mongo.getID(ownerId)
+    let games = await mongo.collection('games').find(filter).toArray()
+    if (!games) games = []
+    return games.map(game => new GameBackend(game))
+  }
+
   async loadWikipedia() {
     this.wikipedia = await WikipediaBackend.getById(this.wikipediaId)
+  }
+  async getLinks() {
+    if(!this.wikipedia) await this.loadWikipedia()
+    const pageid = this.steps[this.steps.length - 1]
+      ? this.steps[this.steps.length - 1].pageid
+      : this.wikipedia.beginPage
+    const links = await wikipediaWrapper.getPageLinks(pageid)
+    return links
   }
 }
 
