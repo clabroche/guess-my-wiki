@@ -58,6 +58,7 @@ router.post('/:gameId/next/', searchableFields, async function (req, res) {
   const game = await Game.getById(req.params.gameId)
   await game.loadWikipedia()
   game.steps.push(link)
+  game.score = Math.floor(game.score * 0.9)
   if(link.pageid === game.wikipedia.endPage) {
     game.completed = true
   }

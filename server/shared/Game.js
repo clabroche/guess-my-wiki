@@ -105,6 +105,7 @@ class Game {
   }
 
   async next(link) {
+    this.score = Math.floor(this.score * 0.9)
     const { data: links } = await api.post(`/games/${this._id}/next`, link)
     return links
   }

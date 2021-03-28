@@ -30,7 +30,7 @@
 import { ref } from '@vue/reactivity'
 import Welcome from '../components/dashboard/Welcome.vue'
 import router from '../router'
-import { computed, onMounted, watch } from '@vue/runtime-core'
+import { computed, onBeforeUnmount, onMounted, watch } from '@vue/runtime-core'
 import Game from '../../server/shared/Game'
 import Line from '../components/Line.vue'
 import Spinner from '../components/Spinner.vue'
@@ -57,11 +57,28 @@ export default {
       loading.value = false
     })
 
+    const score = ref(game.value?.score || 1000)
+    let interval
+    watch(() => game.value?.score || 1000, async (newScore, oldScore) => {
+      clearInterval(interval)
+      const delta = oldScore - newScore
+      const step = Math.ceil(delta / 16)
+      interval = setInterval(() => {
+        if(game.value?.score === score.value) clearInterval(interval)
+        else {
+          if(score.value < game.value?.score) {
+            score.value = game.value?.score
+          } else {
+            score.value -= step
+          }
+        }
+      }, 25);
+      console.log(oldScore, newScore)
+    })
+    onBeforeUnmount(() => clearInterval(interval))
+    
     return {
       loading,
-      currentPage: computed(() => {
-        
-      }),
       gameId,
       game,
       currentStep,
@@ -83,7 +100,7 @@ export default {
       }),
       headerSummary: computed(() => {
         if(game.value?.completed) return []
-        return [{label: game.value?.steps?.length || 0, icon: 'fas fa-shoe-prints'}, {label: game.value?.score || 0, icon: 'fas fa-trophy'}]
+        return [{label: game.value?.steps?.length || 0, icon: 'fas fa-shoe-prints'}, {label: score.value || 0, icon: 'fas fa-trophy'}]
       })
     }
   }
