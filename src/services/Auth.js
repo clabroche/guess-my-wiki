@@ -64,6 +64,7 @@ Auth.prototype.login = async function(user) {
     this.user.value = await this.getUser()
   }
   localStorage.setItem('token', this.token)
+  API.defaults.headers.token = this.token
   return token
 }
 
@@ -79,6 +80,7 @@ Auth.prototype.register = async function(user) {
     this.user.value = await this.getUser()
   }
   localStorage.setItem('token', this.token)
+  API.defaults.headers.token = this.token
   return token
 }
 export default new Auth()
