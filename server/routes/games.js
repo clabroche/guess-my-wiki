@@ -64,7 +64,7 @@ router.post('/:gameId/next/', searchableFields, async function (req, res) {
   game.steps.push(link)
   game.score = Math.floor(game.score * 0.95)
   if(game.score < 0 ) game.score = 0
-  if (link.pageid === game.wikipedia.endPage) {
+  if (link.pageid === game.wikipedia.endPage || link.pageid === game.wikipedia.endLabel) {
     game.completed = true
   }
   game.currentLinks = await wikipediaWrapper.getPageLinks(link.pageid)
@@ -77,7 +77,7 @@ router.post('/:gameId/more/', searchableFields, async function (req, res) {
   await game.loadWikipedia()
   game.score = Math.floor(game.score - 150)
   if (game.score < 0) game.score = 0
-  if (link.pageid === game.wikipedia.endPage) {
+  if (link.pageid === game.wikipedia.endPage || link.pageid === game.wikipedia.endLabel) {
     game.completed = true
   }
   game.currentLinks = await wikipediaWrapper.getPageLinks(link.pageid, game.currentLinks.length + 10)
