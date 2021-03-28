@@ -26,9 +26,7 @@
       <div class="additional-left" v-if="additionalLeft !== null">
         {{additionalLeft}}
       </div>
-      <div class="additional-center" v-if="additionalCenter !== null">
-        {{additionalCenter}}
-      </div>
+      <div class="additional-center" v-if="additionalCenter !== null" v-html="additionalCenter"/>
       <div class="additional-right" v-if="additionalAction" @click.stop="$emit('action')">
         <i class="fas" :class="'fa-'+ additionalActionIcon" aria-hidden="true"></i>
       </div>

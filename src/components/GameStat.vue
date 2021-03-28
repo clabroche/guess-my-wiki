@@ -18,7 +18,7 @@
     <div class="scroll">
       <div class="scores">
         <div class="score-container">
-          <i class="fas fa-trophy trophy"></i>
+          <i class="fas fa-award trophy"></i>
           <div class="score">
             <div class="value">{{game?.score || 0}}</div>points
           </div>

@@ -14,11 +14,11 @@
         <h3>{{category.label}}</h3>
         <line-cmp v-for="game of category.games" :key="game._id"
           :name="game?.wikipedia?.endLabel"
-          :description="'Dernière page: '+game?.steps[game?.steps.length - 1]?.label"
-          :additionalCenter="game.steps.length + ' étapes'"
+          :description="getLastDescription(game)"
+          :additionalCenter="getScores(game)"
           @click="goTo(game)">
           <div class="delete">
-            <i class="fas fa-trash" @click.stop="deleteGame(game)"></i>
+            <i class="far fa-trash-alt" @click.stop="deleteGame(game)"></i>
           </div>
         </line-cmp>
       </div>
@@ -71,6 +71,13 @@ export default {
       },
       goTo(game) {
         router.push({name: 'game', params: {gameId: game._id}})
+      },
+      getLastDescription(game) {
+        if(game?.completed) return ''
+        return 'Dernière page: '+(game?.steps[game?.steps.length - 1]?.label || game?.wikipedia?.beginLabel)
+      },
+      getScores(game) {
+        return `<i class="fas fa-shoe-prints"></i>${game?.steps?.length} - <i class="fas fa-award"></i> ${game?.score || 0}`
       }
     }
   }
@@ -93,6 +100,9 @@ export default {
     }
     .section {
       margin-bottom: 50px;
+    }
+    .delete {
+      color: #6c6c6c;
     }
   }
 }
