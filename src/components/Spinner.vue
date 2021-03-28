@@ -62,7 +62,7 @@ export default {
 </style>
 <style scoped lang="scss">
 .spinner {
-  border: 3px solid #26928e;
+  border: 3px solid var(--headerBgColor);
   width: 70px;
   height: 70px;
   box-sizing: border-box;
@@ -84,7 +84,7 @@ export default {
     animation-duration: 0.8s;
     animation-fill-mode: forwards;
     animation-iteration-count: infinite;
-    background-color: #26928e;
+    background-color: var(--headerBgColor);
     position: absolute;
     border-radius: 100%;
   }
@@ -93,7 +93,7 @@ export default {
     content: " ";
     width: 30%;
     height: 30%;
-    background-color: #26928e;
+    background-color: var(--headerBgColor);
     position: absolute;
     border-radius: 100%;
   }

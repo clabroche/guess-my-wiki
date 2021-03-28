@@ -3,6 +3,7 @@
     <welcome :mini="true"
       :header="headerTitle"
       :description="headerDescription"
+      :spaceBetween="true"
       :actions="headerSummary"/>
     <div class="lists-container">
       <template v-if="!game?.completed">

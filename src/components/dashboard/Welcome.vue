@@ -1,11 +1,13 @@
 <template>
-  <div class="welcome-root" :class="{[image]: image, mini}">
-    <div class="title" :style="{fontSize: headerFontSize }">
-      {{header}}
-    </div>
-    <div class="description">
-      {{description}}
-      <slot></slot>
+  <div class="welcome-root" :class="{[image]: image, mini, ['space-between']:spaceBetween}">
+    <div class="infos">
+      <div class="title" :style="{fontSize: headerFontSize }">
+        {{header}}
+      </div>
+      <div class="description">
+        {{description}}
+        <slot></slot>
+      </div>
     </div>
     <div class="actions" v-if="actions?.length">
       <div class="action" @click="action.cb()" v-for="(action, i) of actions" :key="'action-' + i">
@@ -25,6 +27,7 @@ export default {
     description: {default: 'Une petite partie ?'},
     mini: {default: false},
     actions: {default: () => []},
+    spaceBetween: {default: false}
   }
 }
 </script>
@@ -42,6 +45,18 @@ export default {
   margin-bottom: 1px;
   flex-shrink: 0;
   @include backgroundGradientImage(0.8, '../../assets/login.jpg');
+  &.space-between {
+    flex-direction: row;
+    justify-content: space-between;
+    text-align: center;
+    .infos {
+      width: 100%;
+    }
+    .actions {
+      width: max-content;
+      position: relative;
+    }
+  }
   &.mini {
     height: 100px;
     .title {
