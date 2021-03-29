@@ -91,6 +91,13 @@ class Wikipedia {
     if (!wikipedias) wikipedias = []
     return wikipedias.map(wiki => new Wikipedia(wiki))
   }
+
+  /** @param {string} link */
+  // eslint-disable-next-line no-unused-vars
+  static async getLinkDefinition(link, ...args) {
+    let { data: description } = await api.post('/wikipedias/link-description/' + link)
+    return description
+  }
 }
 
 module.exports = Wikipedia

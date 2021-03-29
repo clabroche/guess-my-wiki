@@ -2,6 +2,7 @@
   <div class="root-lists">
     <welcome :mini="true"
       :header="headerTitle"
+      :explainLink="true"
       :description="headerDescription"
       :spaceBetween="true"
       :actions="headerSummary"/>
@@ -11,9 +12,11 @@
           <line-cmp v-for="link of game.currentLinks" :key="link.plcontinue"
             :bottomLineActive="false"
             :name="link.label"
+            :linkExplain="true"
+            @trigger="loadPopover(link,$event)"
             @click="goToNext(link)"/>
           <button v-if="game?.currentLinks?.length % 10 === 0" @click="more">
-            Voir plus (-150<i class="fas fa-award"/>)
+            Voir plus (-50<i class="fas fa-award"/>)
           </button>
         </template>
         <template v-else>
@@ -38,6 +41,7 @@ import Game from '../../server/shared/Game'
 import Line from '../components/Line.vue'
 import Spinner from '../components/Spinner.vue'
 import GameStat from '../components/GameStat.vue'
+import Wikipedia from '../../server/shared/Wikipedia'
 export default {
   components: {
     Welcome,
@@ -84,6 +88,10 @@ export default {
       gameId,
       game,
       currentStep,
+      async loadPopover(link, cb) {
+        if(!cb) return
+        cb(await Wikipedia.getLinkDefinition(link.label))
+      }, 
       async goToNext(link) {
         loading.value = true
         game?.value?.steps.push(link)

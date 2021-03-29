@@ -75,7 +75,7 @@ router.post('/:gameId/more/', searchableFields, async function (req, res) {
   const link = req.body
   const game = await Game.getById(req.params.gameId)
   await game.loadWikipedia()
-  game.score = Math.floor(game.score - 150)
+  game.score = Math.floor(game.score - 50)
   if (game.score < 0) game.score = 0
   if (link.pageid === game.wikipedia.endPage || link.pageid === game.wikipedia.endLabel) {
     game.completed = true

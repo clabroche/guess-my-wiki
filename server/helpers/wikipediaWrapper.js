@@ -18,12 +18,33 @@ module.exports = {
     return wiki._id
   },
   getPageLinks,
-  getRandomPageLink
+  getRandomPageLink,
+  getSummary
 }
 
 const wiki = axios.create({
   baseURL: 'https://fr.wikipedia.org/w/api.php'
 })
+
+async function getSummary(pageid) {
+  const params = {
+    action: 'query',
+    format: 'json',
+    prop: 'extracts',
+    explaintext: 1,
+    exintro: 1,
+  }
+  if (typeof pageid === 'number') {
+    params.pageids = pageid
+  } else {
+    params.titles = pageid
+  }
+  const { data: resp } = await wiki.get('', {params})
+  const res = resp?.query?.pages
+  const _pageid = Object.keys(res).pop()
+  if(!_pageid) return ''
+  return _pageid
+}
 async function searchInWiki(search) {
   const { data: resp } = await wiki.get('', {
     params: {

@@ -3,6 +3,11 @@
     <div class="infos">
       <div class="title" :style="{fontSize: headerFontSize }">
         {{header}}
+        <popover ref="popover" :async="true" @trigger="loadPopover(header, $event)" v-if="explainLink">
+            <template #trigger>
+              <i class="fas fa-external-link-alt"></i>
+            </template>
+          </popover>
       </div>
       <div class="description">
         {{description}}
@@ -19,7 +24,10 @@
 </template>
 
 <script>
+import Wikipedia from '../../../server/shared/Wikipedia'
+import Popover from '../Popover.vue'
 export default {
+  components: { Popover },
   props: {
     image: {},
     header: {default: 'Bonjour !'},
@@ -27,7 +35,16 @@ export default {
     description: {default: 'Une petite partie ?'},
     mini: {default: false},
     actions: {default: () => []},
-    spaceBetween: {default: false}
+    spaceBetween: {default: false},
+    explainLink: {default: false}
+  },
+  setup() {
+    return {
+      async loadPopover(link, cb) {
+        if(!cb) return
+        cb(await Wikipedia.getLinkDefinition(link))
+      }, 
+    }
   }
 }
 </script>
@@ -70,6 +87,14 @@ export default {
   .title {
     font-size: 3em;
     text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    i {
+      font-size: 13px;
+      margin-left: 5px;
+      margin-bottom: 21px;
+    }
   }
   .description {
     font-size: 1em;

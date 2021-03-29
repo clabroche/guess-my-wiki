@@ -112,7 +112,7 @@ class Game {
   }
   async more() {
     const pageid = this.steps[this.steps.length - 1]?.pageid || this.wikipedia.beginPage
-    this.score = Math.floor(this.score - 150)
+    this.score = Math.floor(this.score - 50)
     const { data: links } = await api.post(`/games/${this._id}/more`, {pageid})
     return links
   }

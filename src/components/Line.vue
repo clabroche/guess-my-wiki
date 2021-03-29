@@ -12,6 +12,11 @@
       <div class="line-content">
         <div class="name">
           {{name}}
+          <popover ref="popover" :async="true" @trigger="$emit('trigger', $event)" v-if="linkExplain">
+            <template #trigger>
+              <i class="fas fa-external-link-alt"></i>
+            </template>
+          </popover>
         </div>
         <div class="description">
           {{description}}
@@ -36,7 +41,9 @@
 
 <script>
 import api from '../../server/shared/API'
+import Popover from './Popover.vue'
 export default {
+  components: { Popover },
   props: {
     name: {default: ''},
     icon: {default: ''},
@@ -48,7 +55,8 @@ export default {
     additionalAction: {default: false},
     additionalLeft: {default: null},
     additionalCenter: {default: null},
-    additionalActionIcon: {default: 'sliders-h'}
+    additionalActionIcon: {default: 'sliders-h'},
+    linkExplain: {default: false},
   },
   data() {
     return {
@@ -126,6 +134,13 @@ export default {
           color: var(--headerBgColor);
           font-size: 1.1em;
           white-space: nowrap;
+          display: flex;
+          align-items: center;
+          i{
+            font-size: 0.8em;
+            margin-left: 5px;
+            margin-bottom: 15px;
+          }
         }
         .description {
           font-size: 0.8em;

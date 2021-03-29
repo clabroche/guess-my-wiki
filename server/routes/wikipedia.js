@@ -16,6 +16,10 @@ router.get('/find', auth, searchableFields, async function (req, res) {
     ? res.json(wiki)
     : res.status(404).send('Game not found')
 })
+router.post('/link-description/:link', auth, searchableFields, async function (req, res) {
+  const description = await Wikipedia.getLinkDefinition(req.params.link)
+  res.send(description)
+})
 router.get('/', auth, searchableFields, async function (req, res) {
 })
 router.post('/', authAdmin, searchableFields, async function (req, res) {
@@ -24,5 +28,6 @@ router.put('/:gameId', authAdmin, searchableFields, async function (req, res) {
 })
 router.delete('/:gameId', authAdmin, searchableFields, async function (req, res) {
 })
+
 
 module.exports = router

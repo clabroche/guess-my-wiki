@@ -1,3 +1,4 @@
+const { default: axios } = require("axios")
 const { mongo } = require("../helpers/mongoConnect")
 const Wikipedia = require("./Wikipedia")
 
@@ -78,6 +79,32 @@ class WikipediaBackend extends Wikipedia{
     let wikipedias = await mongo.collection('wikipedias').find(filter).toArray()
     if(!wikipedias) wikipedias = []
     return wikipedias.map(wiki => new WikipediaBackend(wiki))
+  }
+
+  /** @param {string} link */
+  static async getLinkDefinition(link) {
+
+    const wiki = axios.create({
+      baseURL: 'https://fr.wikipedia.org/w/api.php'
+    })
+
+    const params = {
+      action: 'query',
+      format: 'json',
+      prop: 'extracts',
+      explaintext: 1,
+      exintro: 1,
+    }
+    if (typeof link === 'number') {
+      params.pageids = link
+    } else {
+      params.titles = link
+    }
+    const { data: resp } = await wiki.get('', { params })
+    const res = resp?.query?.pages
+    const _pageid = Object.keys(res).pop()
+    if (!_pageid) return ''
+    return res[_pageid]?.extract
   }
 }
 
