@@ -1,7 +1,7 @@
 const { default: axios } = require("axios")
 const { mongo } = require("../helpers/mongoConnect")
 const Wikipedia = require("./Wikipedia")
-
+const wikipediaWrapper = require('../helpers/wikipediaWrapper')
 class WikipediaBackend extends Wikipedia{
   /** @param {WikipediaBackend | {[key: string]: any}} wikipedia */
   constructor(wikipedia) {
@@ -106,6 +106,19 @@ class WikipediaBackend extends Wikipedia{
     if (!_pageid) return ''
     return res[_pageid]?.extract
   }
-}
 
+  /** @param {string} link */
+  static async searchLink(link) {
+    let _link = await wikipediaWrapper.searchInWiki(link)
+    return _link
+  }
+  static async insertNewInDB(steps) {
+    const wiki = new WikipediaBackend({
+      steps,
+      difficulty: 'easy',
+    })
+    await wiki.save()
+    return wiki._id
+  }
+}
 module.exports = WikipediaBackend

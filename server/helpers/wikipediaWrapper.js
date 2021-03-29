@@ -1,25 +1,13 @@
 const { default: axios } = require('axios');
-const WikipediaBackend = require('../shared/WikipediaBackend');
 const textversionjs = require('textversionjs')
 const sort = require('fast-sort');
 const { mongo } = require('./mongoConnect');
 module.exports = {
-  async insertNewInDB(search) {
-    const begin = await randomPageId()
-    const end = await searchInWiki(search)
-    const wiki = new WikipediaBackend({
-      beginPage: begin.pageid,
-      beginLabel: begin.title,
-      endPage: end.pageid,
-      endLabel: end.title,
-      difficulty: 'easy',
-    })
-    await wiki.save()
-    return wiki._id
-  },
   getPageLinks,
   getRandomPageLink,
-  getSummary
+  getSummary,
+  searchInWiki,
+  randomPageId
 }
 
 const wiki = axios.create({

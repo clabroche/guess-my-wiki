@@ -77,6 +77,7 @@ export default {
   justify-content: center;
   align-items: center;
   transform: translateZ(0);
+  flex-shrink: 0;
 
   &::before {
     content: " ";

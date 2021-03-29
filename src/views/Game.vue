@@ -3,9 +3,11 @@
     <welcome :mini="true"
       :header="headerTitle"
       :explainLink="true"
-      :description="headerDescription"
       :spaceBetween="true"
-      :actions="headerSummary"/>
+      :actions="headerSummary"
+      :description="headerDescription"
+      :secondary="headerSecondary">
+    </welcome>
     <div class="lists-container">
       <template v-if="!game?.completed">
         <template v-if="!loading">
@@ -101,7 +103,21 @@ export default {
       },
       headerDescription: computed(() => {
         if(game.value?.completed) return ' '
-        return 'Objectif: '+ game.value?.wikipedia?.endLabel
+        let description = 'Objectif: '+ game.value?.wikipedia?.endLabel
+        return description
+      }),
+      headerSecondary: computed(() => {
+        if(game.value?.wikipedia?.steps?.length > 2) {
+          console.log(game.value.allBonus)
+          const missings = game.value.wikipedia.steps.filter((step, i, steps) => {
+            return i !==0 &&
+              i!==steps.length -1 &&
+              !game.value.allBonus.includes(step.link)
+          })
+          return missings[0]
+            ? `Bonus: ${missings[0].link}`
+            : 'Bonus complétés'
+        }
       }),
       headerTitle: computed(() => {
         if(game.value?.completed) return 'Félicitations'

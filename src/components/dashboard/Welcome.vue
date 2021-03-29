@@ -12,6 +12,9 @@
       <div class="description">
         {{description}}
         <slot></slot>
+      </div> 
+      <div class="description">
+        {{secondary}}
       </div>
     </div>
     <div class="actions" v-if="actions?.length">
@@ -33,6 +36,7 @@ export default {
     header: {default: 'Bonjour !'},
     headerFontSize: {default: null}, 
     description: {default: 'Une petite partie ?'},
+    secondary: {default: ''},
     mini: {default: false},
     actions: {default: () => []},
     spaceBetween: {default: false},

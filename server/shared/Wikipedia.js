@@ -17,10 +17,15 @@ class Wikipedia {
     this.averageSteps = wikipedia.averageSteps || 0
     /** @type {boolean} tell to builder to recompute stats from this Wikipedia */
     this.needRecompute = wikipedia.needRecompute ? true : false
-    /** @type {string[]} */
-    this.steps = wikipedia.steps || []
+    /** @type {{link: string, pageid: number}[]} */
+    this.steps = wikipedia.steps ? wikipedia.steps : []
     /** @type {('easy' | 'medium' | 'hard' | 'custom')} */
     this.difficulty = wikipedia.difficulty
+
+    if (!this.beginLabel) this.beginLabel = this.steps[0].link
+    if (!this.beginPage) this.beginPage = this.steps[0].pageid
+    if (!this.endLabel) this.endLabel = this.steps[this.steps.length - 1].link
+    if (!this.endPage) this.endPage = this.steps[this.steps.length - 1].pageid
   }
   /** @param {Wikipedia | {[key: string]: any}} wikipedia */
   merge(wikipedia) {
@@ -97,6 +102,13 @@ class Wikipedia {
   static async getLinkDefinition(link, ...args) {
     let { data: description } = await api.post('/wikipedias/link-description/' + link)
     return description
+  }
+
+  /** @param {string} link */
+  // eslint-disable-next-line no-unused-vars
+  static async searchLink(link, ...args) {
+    let { data: _link } = await api.get('/wikipedias/search-link/' + link)
+    return _link
   }
 }
 

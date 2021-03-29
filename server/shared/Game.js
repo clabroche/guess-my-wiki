@@ -17,8 +17,12 @@ class Game {
     this.wikipediaId = game.wikipediaId
     /** @type {import('./WikipediaBackend')} */
     this.wikipedia = game.wikipedia
+    /** @type {Array<number>} */
+    this.custom = this.custom ? this.custom : []
     /** @type {Array} */
     this.steps = game.steps || []
+    /** @type {Array<string>} */
+    this.allBonus = game.allBonus || []
     /** @type {Array} */
     this.currentLinks = game.currentLinks || []
   }

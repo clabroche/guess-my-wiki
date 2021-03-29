@@ -20,6 +20,10 @@ router.post('/link-description/:link', auth, searchableFields, async function (r
   const description = await Wikipedia.getLinkDefinition(req.params.link)
   res.send(description)
 })
+router.get('/search-link/:link', auth, searchableFields, async function (req, res) {
+  const description = await Wikipedia.searchLink(req.params.link)
+  res.json(description)
+})
 router.get('/', auth, searchableFields, async function (req, res) {
 })
 router.post('/', authAdmin, searchableFields, async function (req, res) {

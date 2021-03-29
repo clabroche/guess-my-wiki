@@ -39,7 +39,15 @@ router.get('/:gameId/current-step', searchableFields, async function (req, res) 
 router.post('/', async function (req, res) {
   const difficulty = req.body?.difficulty
   if (difficulty === 'custom') {
-    req.body.wikipediaId = await wikipediaWrapper.insertNewInDB(req.body?.custom)
+    req.body.custom = await PromiseB.map(req.body.custom, async link => {
+      if(link && link.pageid) return link
+      const _link = await wikipediaWrapper.randomPageId()
+      return {
+        link: _link.title,
+        pageid: _link.pageid,
+      }
+    })
+    req.body.wikipediaId = await Wikipedia.insertNewInDB(req.body?.custom)
     if (!req.body.wikipediaId) return res.status(404).send('Page not found')
   }
   const game = new Game({...req.body, ownerId: req.user._id})
@@ -64,6 +72,18 @@ router.post('/:gameId/next/', searchableFields, async function (req, res) {
   game.steps.push(link)
   game.score = Math.floor(game.score * 0.95)
   if(game.score < 0 ) game.score = 0
+  
+  const missings = game.wikipedia.steps.filter((step, i, steps) => {
+    return i !== 0 &&
+      i !== steps.length - 1 &&
+      !game.allBonus.includes(step.link)
+  })
+  const missingslabels = missings.map(a => a.link)
+  const indexOfBonusLink = missingslabels.indexOf(link.pageid)
+  if(indexOfBonusLink !== -1) {
+    game.allBonus.push(link.pageid)
+    game.score += 500
+  } 
   if (link.pageid === game.wikipedia.endPage || link.pageid === game.wikipedia.endLabel) {
     game.completed = true
   }
