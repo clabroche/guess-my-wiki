@@ -15,6 +15,10 @@
       <i class="fas fa-home"></i>
       Revenir à l'écran d'accueil
     </button>
+    <button @click="share">
+      <i class="fas fa-share"></i>
+      Partager
+    </button>
     <div class="scroll">
       <div class="scores">
         <div class="score-container">
@@ -42,6 +46,10 @@
 </template>
 
 <script>
+import { Plugins } from '@capacitor/core';
+const { Share } = Plugins;
+
+
 export default {
   components: {  },
   props: {
@@ -49,6 +57,19 @@ export default {
       /** @type {import('../../server/shared/Game')} */
       default: null,
       required: true,
+    }
+  },
+  setup(props) {
+    return {
+      async share() {
+        let shareRet = await Share.share({
+          title: 'Regardes !',
+          text: `Mon score pour aller de ${props.game?.wikipedia?.beginLabel} à ${props.game?.wikipedia?.endLabel}`,
+          url: '',
+          dialogTitle: 'Partager à mes ami(e)s'
+        });
+        console.log(shareRet)
+      }
     }
   }
 }

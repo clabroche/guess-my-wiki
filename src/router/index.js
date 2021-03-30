@@ -3,6 +3,8 @@ import Dashboard from '../views/Dashboard.vue'
 import Login from '../views/Login.vue'
 import NewGame from '../views/NewGame.vue'
 import Game from '../views/Game.vue'
+import { Plugins } from '@capacitor/core';
+const { App } = Plugins;
 
 const routes = [
   {
@@ -57,4 +59,13 @@ const router = createRouter({
   }
 })
 
+App.addListener('appUrlOpen', function (data) {
+  const slug = data.url.split('.fr').pop();
+
+  if (slug) {
+    router.push({
+      path: slug,
+    });
+  }
+});
 export default router
