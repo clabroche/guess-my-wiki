@@ -8,6 +8,7 @@
             <i class="fas " :class="getIcon(i)"></i>
             <input type="text" :placeholder="getPlaceholder(i)"
               :value="step.link"
+              @input="typeInput(step, $event.target.value)"
               @blur="updateLink($event.target.value, step)"
               @keypress.enter="updateLink($event.target.value, step)">
             <spinner :size="20" v-if="step.loading"/>
@@ -52,7 +53,17 @@ export default {
       custom,
       type: ref(),
       steps,
+      typeInput(step, value) {
+        if(value) {
+          step.link = value
+          step.success = false
+        } else {
+          step.link = ''
+          step.success = true
+        }
+      },
       async updateLink(link,step) {
+        console.log(link)
         if(!link) {
           step.link = ''
           step.pageid = null
