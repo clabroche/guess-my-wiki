@@ -47,6 +47,7 @@
 
 <script>
 import { Plugins } from '@capacitor/core';
+import router from '../router';
 const { Share } = Plugins;
 
 
@@ -65,7 +66,7 @@ export default {
         let shareRet = await Share.share({
           title: 'Regardes !',
           text: `Mon score pour aller de ${props.game?.wikipedia?.beginLabel} à ${props.game?.wikipedia?.endLabel}`,
-          url: '',
+          url: process.env.VUE_APP_SERVER_URL + ':' +  process.env.VUE_APP_SERVER_PORT + '/#' + router.currentRoute.value.path,
           dialogTitle: 'Partager à mes ami(e)s'
         });
         console.log(shareRet)
