@@ -11,14 +11,21 @@
         {{game?.wikipedia?.endLabel}}
       </div>
     </div>
-    <button @click="$router.push({name: 'dashboard'})">
-      <i class="fas fa-home"></i>
-      Revenir à l'écran d'accueil
-    </button>
-    <button @click="share">
-      <i class="fas fa-share"></i>
-      Partager
-    </button>
+    <div class="buttons">
+      <button @click="$router.push({name: 'dashboard'})">
+        <i class="fas fa-home"></i>
+        Revenir à l'écran d'accueil
+      </button>
+      <button @click="share" v-if="game.ownerId === me">
+        <i class="fas fa-share-alt"></i>
+        Partager
+      </button>
+
+      <button @click="replay">
+        <i class="fas fa-reply-all"></i>
+        Rejouer cette partie
+      </button>
+    </div>
     <div class="scroll">
       <div class="scores">
         <div class="score-container">
@@ -48,6 +55,9 @@
 <script>
 import { Plugins } from '@capacitor/core';
 import router from '../router';
+import { computed } from '@vue/runtime-core';
+import Auth from '../services/Auth';
+import Game from '../../server/shared/Game';
 const { Share } = Plugins;
 
 
@@ -62,7 +72,15 @@ export default {
   },
   setup(props) {
     return {
+      me: computed(() => Auth?.user.value?._id),
+      async replay() {
+        const game = new Game({difficulty: props.game.difficulty})
+        game.wikipediaId = props.game.wikipediaId
+        await game.save()
+        router.push({name: 'game', params: {gameId: game._id}})
+      },
       async share() {
+        await props.game.makePublic()
         let shareRet = await Share.share({
           title: 'Regardes !',
           text: `Mon score pour aller de ${props.game?.wikipedia?.beginLabel} à ${props.game?.wikipedia?.endLabel}`,
@@ -159,6 +177,9 @@ export default {
         }
       }
     } 
+  }
+  .buttons{
+    display: flex;
   }
 }
 </style>

@@ -25,6 +25,7 @@ app.use(require('cors')({
     'ionic://localhost',
     'http://localhost',
     'http://localhost:8080',
+    'http://192.168.1.85:8081',
     'http://localhost:8100'
   ]
 }));

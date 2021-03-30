@@ -72,13 +72,13 @@ export default {
       async login() {
         if(!checkRequirments()) return
         await Auth.login(user)
-          .then(() => router.push({name: 'home'}))
+          .then(() => router.go(-1))
           .catch(handleError)
       },
       async registerFun() {
         if(!checkRequirments()) return
         await Auth.register(user)
-          .then(() => router.push({name: 'home'}))
+          .then(() => router.go(-1))
           .catch(handleError)
       }
     }

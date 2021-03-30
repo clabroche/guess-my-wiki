@@ -70,7 +70,8 @@ class GameBackend extends Game{
 
   /** @param {{[key: string]: any}} filter */
   static async find(filter = {}, ownerId) {
-    if(ownerId) filter.ownerId = mongo.getID(ownerId)
+    if(ownerId && !filter['$or']) filter.ownerId = mongo.getID(ownerId)
+    console.log(filter)
     const game = await mongo.collection('games').findOne(filter)
     return game ? new GameBackend(game) : null
   }

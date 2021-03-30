@@ -21,6 +21,8 @@ class Game {
     this.custom = this.custom ? this.custom : []
     /** @type {Array} */
     this.steps = game.steps || []
+    /** @type {Boolean} */
+    this.public = game.public ? true : false
     /** @type {Array<string>} */
     this.allBonus = game.allBonus || []
     /** @type {Array} */
@@ -100,8 +102,8 @@ class Game {
 
   /** @param {import('mongodb').ObjectID | string} _id */
   // eslint-disable-next-line no-unused-vars
-  static async getById(_id, ...args) {
-    return Game.find({ _id })
+  static async getById(_id,  ...args) {
+    return Game.find({ _id, public: true })
   }
 
   async getLinks() {
@@ -117,8 +119,12 @@ class Game {
   async more() {
     const pageid = this.steps[this.steps.length - 1]?.pageid || this.wikipedia.beginPage
     this.score = Math.floor(this.score - 50)
-    const { data: links } = await api.post(`/games/${this._id}/more`, {pageid})
+    const { data: links } = await api.post(`/games/${this._id}/more`, { pageid })
     return links
+  }
+  async makePublic() {
+    this.public = true
+    return this.save()
   }
 }
 

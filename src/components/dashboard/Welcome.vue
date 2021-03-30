@@ -11,7 +11,7 @@
       </div>
       <div class="description">
         {{description}}
-        <popover ref="popover" :async="true" @trigger="loadPopover(description.split(':').pop(), $event)" v-if="explainLink">
+        <popover ref="popover" :async="true" @trigger="loadPopover(description.split(':').pop(), $event)" v-if="description.trim() && explainLink">
           <template #trigger>
             <i class="fas fa-external-link-alt"></i>
           </template>
@@ -20,7 +20,7 @@
       </div> 
       <div class="description">
         {{secondary}}
-        <popover ref="popover" :async="true" @trigger="loadPopover(secondary.split(':').pop(), $event)" v-if="explainLink">
+        <popover ref="popover" :async="true" @trigger="loadPopover(secondary.split(':').pop(), $event)" v-if="secondary.trim() && explainLink">
           <template #trigger>
             <i class="fas fa-external-link-alt"></i>
           </template>

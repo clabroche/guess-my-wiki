@@ -6,15 +6,29 @@ const auth = require('../middleware/auth');
 const Wikipedia = require('../shared/WikipediaBackend');
 const wikipediaWrapper = require('../helpers/wikipediaWrapper');
 const PromiseB = require('bluebird');
+const { mongo } = require('../helpers/mongoConnect');
 const searchableFields = parsefilterQuery([
   { field: '_id', type: 'objectId', label: 'ID' },
+  { field: 'public', type: 'boolean', label: 'Public' },
   { field: 'completed', type: 'boolean', label: 'Complété' },
 ])
 
 router.use(auth)
 
 router.get('/find', searchableFields, async function (req, res) {
-  const filter = req.filter
+  let filter = req.filter
+  if(filter.public) {
+    delete filter.public
+    filter = {
+      $or: [{
+        ...filter,
+        ownerId: mongo.getID(req.user._id)
+      },{
+        ...filter,
+        public: true
+      }]
+    }
+  }
   const game = await Game.find(filter, req.user._id)
   if (game) {
     await game.loadWikipedia()
@@ -38,7 +52,7 @@ router.get('/:gameId/current-step', searchableFields, async function (req, res) 
 })
 router.post('/', async function (req, res) {
   const difficulty = req.body?.difficulty
-  if (difficulty === 'custom') {
+  if (difficulty === 'custom' && !req.body.wikipediaId) {
     req.body.custom = await PromiseB.map(req.body.custom, async link => {
       if(link && link.pageid) return link
       const _link = await wikipediaWrapper.randomPageId()
