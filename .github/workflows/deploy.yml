@@ -42,7 +42,7 @@ jobs:
     - name: Move signed apk
       run: mv ${SIGNED_RELEASE_FILE} server/public/guessMyWiki.apk
     - name: add well known
-      run: mkdir server/public/.well-known && echo ${{ secrets.WELLKNOWN }} > server/public/.well-known/assetlinks.json
+      run: mkdir server/public/.well-known && echo '${{ secrets.WELLKNOWN }}' > server/public/.well-known/assetlinks.json
     - name: Publish to Registry
       uses: elgohr/Publish-Docker-Github-Action@master
       with:
