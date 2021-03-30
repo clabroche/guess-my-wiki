@@ -1,6 +1,6 @@
 <template>
   <div class="root-lists">
-    <welcome :mini="true" header="Choisir le niveau de difficulté" description=" "/>
+    <welcome :mini="true" header="Choisir le parcours" description=" "/>
     <div class="lists-container">
       <div>
         <div v-for="(step, i) of steps" :key="step" class="step">
