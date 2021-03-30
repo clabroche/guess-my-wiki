@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.coco.guessMyWiki">
 
     <application
@@ -18,17 +19,32 @@
             android:theme="@style/AppTheme.NoActionBarLaunch"
             android:launchMode="singleTask">
 
+            <tools:validation testUrl="https://guessmywiki.corentinlabroche.fr" />
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
-            <intent-filter android:autoVerify="true">
+            <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="@string/custom_url_scheme" />
-                <data android:scheme="https" android:host="guessmywiki.corentinlabroche.fr" />
+
+                <data
+                    android:scheme="@string/custom_url_scheme"
+                    android:host="guessmywiki.corentinlabroche.fr" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:scheme="https"
+                    android:host="guessmywiki.corentinlabroche.fr" />
             </intent-filter>
 
         </activity>
