@@ -104,6 +104,7 @@ export default {
       async goTo(difficulty) {
         const game = new Game({difficulty})
         if(difficulty === 'custom') {
+          // @ts-ignore
           game.custom = steps.value.map(step => ({link: step.link, pageid: step.pageid}))
         }  
         await game.save()

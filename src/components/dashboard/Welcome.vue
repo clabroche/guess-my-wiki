@@ -4,17 +4,27 @@
       <div class="title" :style="{fontSize: headerFontSize }">
         {{header}}
         <popover ref="popover" :async="true" @trigger="loadPopover(header, $event)" v-if="explainLink">
-            <template #trigger>
-              <i class="fas fa-external-link-alt"></i>
-            </template>
-          </popover>
+          <template #trigger>
+            <i class="fas fa-external-link-alt"></i>
+          </template>
+        </popover>
       </div>
       <div class="description">
         {{description}}
+        <popover ref="popover" :async="true" @trigger="loadPopover(description.split(':').pop(), $event)" v-if="explainLink">
+          <template #trigger>
+            <i class="fas fa-external-link-alt"></i>
+          </template>
+        </popover>
         <slot></slot>
       </div> 
       <div class="description">
         {{secondary}}
+        <popover ref="popover" :async="true" @trigger="loadPopover(secondary.split(':').pop(), $event)" v-if="explainLink">
+          <template #trigger>
+            <i class="fas fa-external-link-alt"></i>
+          </template>
+        </popover>
       </div>
     </div>
     <div class="actions" v-if="actions?.length">
@@ -79,14 +89,20 @@ export default {
     }
   }
   &.mini {
-    height: 100px;
+    height: 150px;
     .title {
       font-size: 1.4em;
     }
     .description {
+      display: flex;
+      justify-content: center;
       font-size: 0.9em;
       margin-top: 10px;
     }
+  }
+  i {
+    font-size: 13px;
+    margin-left: 5px;
   }
   .title {
     font-size: 3em;
@@ -94,16 +110,19 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    i {
-      font-size: 13px;
-      margin-left: 5px;
-      margin-bottom: 21px;
-    }
   }
   .description {
     font-size: 1em;
     margin-top: 20px;
     text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .secondary {
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 }
 .actions {
