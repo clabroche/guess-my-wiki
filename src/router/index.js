@@ -4,6 +4,7 @@ import Login from '../views/Login.vue'
 import NewGame from '../views/NewGame.vue'
 import Game from '../views/Game.vue'
 import { Plugins } from '@capacitor/core';
+import history from './history'
 const { App } = Plugins;
 
 const routes = [
@@ -42,6 +43,7 @@ const router = createRouter({
   history: createWebHashHistory(),
   routes,
   scrollBehavior(to, from, savedHistory) {
+    history.push(from)
     try {
       localStorage.setItem(`scroll-${from.name.toString()}`, document.querySelector('[save-scroll]')?.scrollTop.toFixed())
       if(savedHistory) {

@@ -35,6 +35,7 @@ import Auth from '../services/Auth'
 import router from '../router'
 import User from '../services/User'
 import notification from '../services/notification'
+import history from '../router/history'
 
 export default {
   props: {
@@ -66,19 +67,26 @@ export default {
       }
       return notification.next('error', 'Erreur inconnue')
     }
+    const loginSucceed = () => {
+      if(!history[history.length - 1] || ['register', 'login'].includes(history[history.length - 1].name )) {
+        router.push({name: 'dashboard'})
+      }else {
+        router.go(-1)
+      }
+    }
     return {
       user,
       registerOrLoginTitle,
       async login() {
         if(!checkRequirments()) return
         await Auth.login(user)
-          .then(() => router.go(-1))
+          .then(loginSucceed)
           .catch(handleError)
       },
       async registerFun() {
         if(!checkRequirments()) return
         await Auth.register(user)
-          .then(() => router.go(-1))
+          .then(loginSucceed)
           .catch(handleError)
       }
     }
