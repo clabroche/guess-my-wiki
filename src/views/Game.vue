@@ -18,7 +18,7 @@
             @trigger="loadPopover(link,$event)"
             @click="goToNext(link)"/>
           <button v-if="game?.currentLinks?.length % 10 === 0" @click="more">
-            Voir plus (-50<i class="fas fa-award"/>)
+            Voir plus (-5<i class="fas fa-award"/>)
           </button>
         </template>
         <template v-else>

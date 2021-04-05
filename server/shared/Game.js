@@ -112,13 +112,13 @@ class Game {
   }
 
   async next(link) {
-    this.score = Math.floor(this.score * 0.95)
+    this.score = Math.floor(this.score * 0.99)
     const { data: links } = await api.post(`/games/${this._id}/next`, link)
     return links
   }
   async more() {
     const pageid = this.steps[this.steps.length - 1]?.pageid || this.wikipedia.beginPage
-    this.score = Math.floor(this.score - 50)
+    this.score = Math.floor(this.score - 5)
     const { data: links } = await api.post(`/games/${this._id}/more`, { pageid })
     return links
   }

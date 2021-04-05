@@ -84,7 +84,7 @@ router.post('/:gameId/next/', searchableFields, async function (req, res) {
   const game = await Game.getById(req.params.gameId)
   await game.loadWikipedia()
   game.steps.push(link)
-  game.score = Math.floor(game.score * 0.95)
+  game.score = Math.floor(game.score * 0.99)
   if(game.score < 0 ) game.score = 0
   
   const missings = game.wikipedia.steps.filter((step, i, steps) => {
@@ -109,7 +109,7 @@ router.post('/:gameId/more/', searchableFields, async function (req, res) {
   const link = req.body
   const game = await Game.getById(req.params.gameId)
   await game.loadWikipedia()
-  game.score = Math.floor(game.score - 50)
+  game.score = Math.floor(game.score - 5)
   if (game.score < 0) game.score = 0
   if (link.pageid === game.wikipedia.endPage || link.pageid === game.wikipedia.endLabel) {
     game.completed = true
