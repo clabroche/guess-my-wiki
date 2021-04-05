@@ -66,9 +66,9 @@ export default {
       loading.value = false
     })
 
-    const score = ref(game.value?.score || 1000)
+    const score = ref(game.value?.score || 0)
     let interval
-    watch(() => game.value?.score || 1000, async (newScore, oldScore) => {
+    watch(() => game.value?.score || 0, async (newScore, oldScore) => {
       clearInterval(interval)
       const delta = oldScore - newScore
       const step = Math.ceil(delta / 16)
